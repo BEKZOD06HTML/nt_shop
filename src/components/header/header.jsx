@@ -34,7 +34,6 @@ const Header = () => {
             <div key={user.id} className="search-item">
               <div className="search-item-left">
                 <p>{user.name}</p>
-                <p>created by ubaydulloh</p>
               </div>
               <div className="search-item-right">
                 <button>Join</button>
