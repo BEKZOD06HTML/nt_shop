@@ -20,7 +20,7 @@ export const useAuth = () => {
     mutationFn: login,
     onSuccess(data) {
       localStorage.setItem("token", data?.token);
-      navigate("/profile"); // Login muvaffaqiyatli bo'lsa profile sahifasiga yo'naltirish
+      navigate("/profile"); 
       toast.success("Login successful");
     },
     onError(error) {
