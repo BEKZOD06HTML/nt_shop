@@ -1,4 +1,4 @@
-// Login.jsx
+
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -8,7 +8,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { loginMutation } = useAuth();
 
-  // Token bor bo'lsa, profile sahifasiga o'tkazish
   if (localStorage.getItem('token')) {
     return <Navigate to='/profile' replace />;
   }

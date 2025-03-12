@@ -11,7 +11,7 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(registerMutation); // ✅ registerMutation obyektini tekshirish
+    console.log(registerMutation); 
     registerMutation.mutate(
       { username, password, name },
       {
