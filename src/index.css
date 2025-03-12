@@ -42,7 +42,7 @@ input:focus {
 }
 
 button {
-  width: 100%;
+  width: 50%;
   padding: 12px;
   background-color: #1e3a8a;
   color: white;
