@@ -4,7 +4,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState({});
   const [password, setPassword] = useState('');
   const { loginMutation } = useAuth();
 
