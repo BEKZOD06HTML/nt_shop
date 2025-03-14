@@ -1,0 +1,82 @@
+
+.siderbar {
+    width: 13%;
+    height: 100vh;
+    border: 1px solid #ccc;
+    position: absolute;
+    top: 5px;
+    left: 0;
+    background: #fff;
+    padding: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .logo_1{
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .profile-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+  
+  .profile-section:hover {
+    background: #f3f4f6; 
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-info span {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .profile-info p {
+    font-size: 12px;
+    color: gray;
+    margin: 0;
+  }
+  
+
+  .group-section {
+    margin-top: 20px;
+  }
+ 
+  .group-section button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+  }
+ 
+  .add-group {
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 8px;
+  }
+
+  .no-data {
+    text-align: center;
+    color: gray;
+    padding: 20px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
