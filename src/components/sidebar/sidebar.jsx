@@ -1,35 +1,57 @@
-import React, { useState } from 'react';
-import { Menu, Dropdown, Button, Avatar } from 'antd';
-import { UserOutlined, SettingOutlined, LockOutlined, LogoutOutlined, PlusOutlined, DownOutlined, TeamOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, Dropdown, Button, Avatar, List } from 'antd';
+import { UserOutlined, DownOutlined, PlusOutlined, TeamOutlined } from '@ant-design/icons';
+import API from '../../utils/API';
 import './sidebar.css';
 
 const Sidebar = () => {
+  const [user, setUser] = useState(null);
+  const [groups, setGroups] = useState([]);
+  const [error, setError] = useState('');
   const [groupVisible, setGroupVisible] = useState(false);
 
-  const profileMenu = (
-    <Menu>
-      <Menu.Item key="1" icon={<UserOutlined />}>My Account</Menu.Item>
-      <Menu.Item key="2" icon={<SettingOutlined />}>Settings</Menu.Item>
-      <Menu.Item key="3" icon={<LockOutlined />}>Lock Screen</Menu.Item>
-      <Menu.Item key="4" icon={<LogoutOutlined />}>Logout</Menu.Item>
-    </Menu>
-  );
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await API.get('/auth/');
+        setUser(response.data);
+      } catch (err) {
+        setError('Xatolik yuz berdi');
+      }
+    };
 
-  const groupMenu = (
-    <Menu>
-      <Menu.Item key="1" icon={<PlusOutlined />}>Add Group</Menu.Item>
-    </Menu>
-  );
+    const fetchGroups = async () => {
+      try {
+        const response = await API.get('/groups/');
+        setGroups(response.data);
+      } catch (err) {
+        console.error("Guruhlarni olishda xatolik", err);
+      }
+    };
+
+    fetchUserData();
+    fetchGroups();
+  }, []);
+
+  if (error) {
+    return <p style={{ color: 'red' }}>{error}</p>;
+  }
 
   return (
-    <div className='siderbar'>
-      <h2 className='logo_1'>GRuops</h2>
-      <Dropdown overlay={profileMenu} trigger={['click']}>
+    <div className='sidebar'>
+      <h2 className='logo_1'>Groups</h2>
+
+      <Dropdown overlay={
+        <Menu>
+          <Menu.Item key="1" icon={<UserOutlined />}>My Account</Menu.Item>
+        </Menu>
+      } trigger={['click']}>
         <div className='profile-section'>
-          <Avatar size={48} icon={<UserOutlined />} />
+          <Avatar size={48} src={user?.avatar || '/default-avatar.png'} icon={!user?.avatar && <UserOutlined />} />
           <div className='profile-info'>
-            <span>guest</span>
-            <p>no name</p>
+            <span>{user?.username || 'Guest'}</span>
+            <p>{user?.name || 'No name'}</p>
           </div>
           <DownOutlined />
         </div>
@@ -39,14 +61,23 @@ const Sidebar = () => {
         <Button type='text' icon={<TeamOutlined />} onClick={() => setGroupVisible(!groupVisible)}>
           Groups
         </Button>
+
         {groupVisible && (
-          <Dropdown overlay={groupMenu} trigger={['click']}>
-            <Button type='primary' icon={<PlusOutlined />} className='add-group'>Add Group</Button>
-          </Dropdown>
+          <List
+            dataSource={groups}
+            renderItem={group => (
+              <List.Item>
+                <span>{group.name}</span>
+              </List.Item>
+            )}
+          />
         )}
-        <div className='no-data'>
-          <p>No data</p>
-        </div>
+
+        <Link to="/groups" className="add-group-btn">
+          <Button type="primary" icon={<PlusOutlined />}>
+            Yangi guruh qushish
+          </Button>
+        </Link>
       </div>
     </div>
   );

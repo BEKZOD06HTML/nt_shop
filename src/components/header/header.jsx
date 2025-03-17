@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './header.css';
 import useGroups from '../../hooks/usegroup';
+import API from '../../utils/API';
 
 const Header = () => {
   const user = JSON.parse(localStorage.getItem('user')) || {};
@@ -14,22 +15,43 @@ const Header = () => {
 
   const [group, setGroup] = useState("");
 
-  const { groups, groupsLoading, groupsError } = useGroups(group);
+  const { groups, groupsLoading } = useGroups(group);
+
+  const joinGroup = async (groupId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Avval tizimga kiring!");
+        return;
+      }
+
+      const response = await API.post(`/groups/${groupId}/join/`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert(`Siz "${response.data.name}" guruhiga qo‘shildingiz!`);
+    } catch (error) {
+      console.error("Guruhga qo‘shilishda xatolik:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Guruhga qo‘shilishda xatolik yuz berdi!");
+    }
+  };
 
   return (
     <header className="header">
-     <div className='logo_team'>
-     <div className="logo">
-        <Link to="/login"  className="logo-text"><img src="./assets/icon/teamwork.png" alt="" /></Link>
+      <div className='logo_team'>
+        <div className="logo">
+          <Link to="/login" className="logo-text">
+            <img src="./assets/icon/teamwork.png" alt="Teamwork Logo" />
+          </Link>
+        </div>
+
+        <nav className="nav-links">
+          <button className="new-button">+ New</button>
+        </nav>
       </div>
 
-      <nav className="nav-links">
-        <button className="new-button">+ New</button>
-      </nav>
-
-     </div>
       <div className="search-container">
-        <img className='lup' src="./assets/icon/loupe.png" alt="" />
+        <img className='lup' src="./assets/icon/loupe.png" alt="Search" />
         <input
           type="text"
           placeholder="Search"
@@ -42,26 +64,29 @@ const Header = () => {
       {group.length > 0 && (
         <div className="search-content">
           <h1>Groups</h1>
-          {groups?.map((user) => (
-            <div key={user.id} className="search-item">
+          {groups?.map((g) => (
+            <div key={g.id} className="search-item">
               <div className="search-item-left">
-                
                 <p className='group'>
                   <span><img src="./assets/icon/teamwork.png" alt="" /></span>
-                  <span>{user.name}</span></p>
+                  <span>{g.name}</span>
+                </p>
               </div>
               <div className="search-item-right">
-                <button className='join'>Join</button>
+                <button className='join' onClick={() => joinGroup(g.id)}>Join</button>
               </div>
             </div>
           ))}
           {groupsLoading && <p>Loading...</p>}
         </div>
       )}
-  <div className='btns'>
-      
-  <button className="out" onClick={handleLogout} ><img src="./assets/icon/logout.png" alt="" /></button>
-  </div>
+
+  
+      <div className='btns'>
+        <button className="out" onClick={handleLogout}>
+          <img src="./assets/icon/logout.png" alt="Logout" />
+        </button>
+      </div>
     </header>
   );
 };

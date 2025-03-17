@@ -61,7 +61,9 @@
 .logout-btn {
   background: #DC3545;
   color: white;
-  width: 50px;
+  width: 100px;
+  position: relative;
+  left: 70%;
 }
  .logout-btn:hover {
   background: #dc0f24;
