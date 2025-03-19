@@ -1,41 +1,88 @@
+/* groups.css */
 .groups-container {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 15px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .groups-container h2 {
-    font-size: 22px;
-    color: #333;
-    margin-bottom: 15px;
-  }
-  
-  .group-list {
-    margin-top: 15px;
-  }
-  
-  .group-item {
-    padding: 10px 15px;
-    background: #f5f5f5;
-    border-radius: 5px;
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #333;
-    text-align: left;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .group-item:hover {
-    background: #e0e0e0;
-  }
-  
-  .error {
-    color: red;
-    margin-bottom: 10px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  background-color: #f4f5f7;
+}
+
+.groups-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.groups-header button {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+
+.group-list {
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: white;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+
+.group-item:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.group-item button {
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.group-item button:hover {
+  background-color: #1890ff;
+  color: white;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.ant-modal {
+  text-align: center;
+  border-radius: 12px;
+}
+
+.ant-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+.ant-btn-primary:hover {
+  background-color: #0077e6;
+}
