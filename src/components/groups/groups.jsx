@@ -18,7 +18,7 @@
     const [memberId, setMemberId] = useState('');
     const [joinPassword, setJoinPassword] = useState('');
 
-    // Guruh yaratish
+
     const handleCreateGroup = () => {
       if (!groupName.trim() || !groupPassword.trim()) {
         return;
@@ -29,7 +29,6 @@
       setModalVisible(false);
     };
 
-    // Guruhga qo‘shilish
     const handleJoinGroup = async () => {
       if (!selectedGroupId || !joinPassword.trim()) return;
       const result = await joinGroup(selectedGroupId, joinPassword);
@@ -39,8 +38,6 @@
       setJoinPassword('');
       setJoinModalVisible(false);
     };
-
-    // Guruhga a’zo qo‘shish
     const handleAddMember = async () => {
       if (!selectedGroupId || !memberId.trim()) return;
       const result = await addMember(selectedGroupId, memberId);
@@ -56,7 +53,8 @@
       <Header/>
       <Siderbar/>
       <div className="groups-container">
-        <h2>Guruhlar</h2>
+      <div className='page1'>
+      <h2>Guruhlar</h2>
         {error && <p className="error">{error}</p>}
 
         <div className="groups-header">
@@ -106,7 +104,7 @@
           loading={loading}
         />
 
-        {/* Yangi guruh yaratish modal */}
+  
         <Modal
           title="Yangi Guruh Yaratish"
           open={modalVisible}
@@ -126,7 +124,6 @@
           />
         </Modal>
 
-        {/* Guruhga qo‘shilish modal */}
         <Modal
           title="Guruhga qo‘shilish"
           open={joinModalVisible}
@@ -139,8 +136,6 @@
             onChange={(e) => setJoinPassword(e.target.value)}
           />
         </Modal>
-
-        {/* Guruhga a’zo qo‘shish modal */}
         <Modal
           title="Guruhga a’zo qo‘shish"
           open={addMemberModalVisible}
@@ -153,6 +148,10 @@
             onChange={(e) => setMemberId(e.target.value)}
           />
         </Modal>
+      </div>
+      <div className='page2'>
+          
+      </div>
       </div>
     </div>
       

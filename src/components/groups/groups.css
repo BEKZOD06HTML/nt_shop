@@ -1,11 +1,16 @@
-/* groups.css */
+
 .groups-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   padding: 20px;
-  width: 100%;
-  background-color: #f4f5f7;
+  width: 80%;
+  background-color: #2263e4;
+  position: relative;
+  left: 13.5%;
+  height: 80vh;
+  top: 20px;
+  justify-content: space-between;
+  padding: 0 50px;
 }
 
 .groups-header {
@@ -85,4 +90,16 @@
 
 .ant-btn-primary:hover {
   background-color: #0077e6;
+}
+
+
+.page1{
+  width: 30%;
+  height: 100%;
+  background: aqua;
+}
+.page2{
+  width: 30%;
+  height: 100%;
+  background: #f0f0f0;
 }
