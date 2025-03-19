@@ -41,12 +41,14 @@ const Profile = () => {
       <div className="profile-container">
         <h2>Your Profile</h2>
         <div className="profile-card">
-         <img className="avatar" src="../assets/icon/user.png" alt="" />
+       <div className='nimadir'>
+       <img className="avatar" src="../assets/icon/user.png" alt="" />
           <div className="profile-info">
             <h3>{user.username}</h3>
             <p>{user.name}</p>
             <span className="status">Active</span>
           </div>
+       </div>
           <button className="logout-btn" onClick={handleLogout}>
             Logout
           </button>

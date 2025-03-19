@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useGroups from '../../hooks/useGroups';
 import { Button, Input, Modal, List } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import './groups.css';
 
 const Groups = () => {
+  const navigate = useNavigate();
   const { groups, loading, error, createGroup } = useGroups();
   const [modalVisible, setModalVisible] = useState(false);
   const [groupName, setGroupName] = useState('');
@@ -24,13 +26,24 @@ const Groups = () => {
     <div className="groups-container">
       <h2>Guruhlar</h2>
       {error && <p className="error">{error}</p>}
-      <Button 
-        type="primary" 
-        icon={<PlusOutlined />} 
-        onClick={() => setModalVisible(true)}
-      >
-        Add Group
-      </Button>
+      
+      <div className="groups-header">
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />} 
+          onClick={() => setModalVisible(true)}
+        >
+          Add Group
+        </Button>
+
+        <Button 
+          type="default" 
+          icon={<UserOutlined />} 
+          onClick={() => navigate('/profile')}
+        >
+          Profile
+        </Button>
+      </div>
 
       <List
         className="group-list"

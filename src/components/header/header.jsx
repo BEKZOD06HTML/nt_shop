@@ -13,32 +13,40 @@ const Header = () => {
     window.location.href = '/login';
   };
 
-  const [group, setGroup] = useState("");
-
+  const [group, setGroup] = useState('');
   const { groups, groupsLoading } = useGroups(group);
 
   const joinGroup = async (groupId) => {
+    if (!groupId) {
+      alert('');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert("Avval tizimga kiring!");
+        alert('');
         return;
       }
 
-      const response = await API.post(`/groups/${groupId}/join/`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await API.post(
+        `/groups/${groupId}/join/`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      alert(`Siz "${response.data.name}" guruhiga qo‘shildingiz!`);
+      alert(`Siz "${response.data.name}"`);
     } catch (error) {
-      console.error("Guruhga qo‘shilishda xatolik:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Guruhga qo‘shilishda xatolik yuz berdi!");
+      console.error('', error.response?.data || error.message);
+      alert(error.response?.data?.message || '');
     }
   };
 
   return (
     <header className="header">
-      <div className='logo_team'>
+      <div className="logo_team">
         <div className="logo">
           <Link to="/login" className="logo-text">
             <img src="./assets/icon/teamwork.png" alt="Teamwork Logo" />
@@ -51,38 +59,44 @@ const Header = () => {
       </div>
 
       <div className="search-container">
-        <img className='lup' src="./assets/icon/loupe.png" alt="Search" />
+        <img className="lup" src="./assets/icon/loupe.png" alt="Search" />
         <input
           type="text"
           placeholder="Search"
           value={group}
           onChange={(e) => setGroup(e.target.value)}
-          className='search-input'
+          className="search-input"
         />
       </div>
 
       {group.length > 0 && (
         <div className="search-content">
           <h1>Groups</h1>
-          {groups?.map((g) => (
-            <div key={g.id} className="search-item">
-              <div className="search-item-left">
-                <p className='group'>
-                  <span><img src="./assets/icon/teamwork.png" alt="" /></span>
-                  <span>{g.name}</span>
-                </p>
+          {groupsLoading ? (
+            <p>Loading...</p>
+          ) : (
+            groups?.map((g) => (
+              <div key={g.id} className="search-item">
+                <div className="search-item-left">
+                  <p className="group">
+                    <span>
+                      <img src="./assets/icon/teamwork.png" alt="" />
+                    </span>
+                    <span>{g.name}</span>
+                  </p>
+                </div>
+                <div className="search-item-right">
+                  <button className="join" onClick={() => joinGroup(g.id)}>
+                    Join
+                  </button>
+                </div>
               </div>
-              <div className="search-item-right">
-                <button className='join' onClick={() => joinGroup(g.id)}>Join</button>
-              </div>
-            </div>
-          ))}
-          {groupsLoading && <p>Loading...</p>}
+            ))
+          )}
         </div>
       )}
 
-  
-      <div className='btns'>
+      <div className="btns">
         <button className="out" onClick={handleLogout}>
           <img src="./assets/icon/logout.png" alt="Logout" />
         </button>
