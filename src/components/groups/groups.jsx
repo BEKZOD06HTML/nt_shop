@@ -1,115 +1,134 @@
-  import React, { useState } from 'react';
-  import { useNavigate } from 'react-router-dom';
-  import useGroups from '../../hooks/useGroups';
-  import { Button, Input, Modal, List } from 'antd';
-  import { PlusOutlined, UserOutlined, LoginOutlined, UserAddOutlined } from '@ant-design/icons';
-  import './groups.css';
-  import Header from '../../components/header/header'
-  import Siderbar from '../../components/sidebar/sidebar'
-  const Groups = () => {
-    const navigate = useNavigate();
-    const { groups, loading, error, createGroup, joinGroup, addMember } = useGroups();
-    const [modalVisible, setModalVisible] = useState(false);
-    const [joinModalVisible, setJoinModalVisible] = useState(false);
-    const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
-    const [groupName, setGroupName] = useState('');
-    const [groupPassword, setGroupPassword] = useState('');
-    const [selectedGroupId, setSelectedGroupId] = useState(null);
-    const [memberId, setMemberId] = useState('');
-    const [joinPassword, setJoinPassword] = useState('');
+import React, { useState } from 'react';
+import { Button, Input, Modal, List } from 'antd';
+import { PlusOutlined, DeleteOutlined, EyeOutlined, UserAddOutlined } from '@ant-design/icons';
+import { useGroups } from '../../hooks/useGroups';
+import './groups.css';
+ import Header from '../header/header'
+ import Siderbar from '../sidebar/sidebar'
 
+const Groups = () => {
+  const {
+    groups,
+    groupsLoading,
+    groupsError,
+    selectedGroupId,
+    setSelectedGroupId,
+    groupMembers,
+    membersLoading,
+    searchText,
+    setSearchText,
+    searchedMembers,
+    searchingMembers,
+    createGroup,
+    deleteGroup,
+    addMember,
+    removeMember,
+  } = useGroups();
 
-    const handleCreateGroup = () => {
-      if (!groupName.trim() || !groupPassword.trim()) {
-        return;
-      }
-      createGroup(groupName, groupPassword);
-      setGroupName('');
-      setGroupPassword('');
-      setModalVisible(false);
-    };
+  // Yangi guruh yaratish uchun modal state
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [groupPassword, setGroupPassword] = useState('');
 
-    const handleJoinGroup = async () => {
-      if (!selectedGroupId || !joinPassword.trim()) return;
-      const result = await joinGroup(selectedGroupId, joinPassword);
-      if (result) {
-        alert('Guruhga muvaffaqiyatli qo‘shildingiz!');
-      }
-      setJoinPassword('');
-      setJoinModalVisible(false);
-    };
-    const handleAddMember = async () => {
-      if (!selectedGroupId || !memberId.trim()) return;
-      const result = await addMember(selectedGroupId, memberId);
-      if (result) {
-        alert('Foydalanuvchi guruhga qo‘shildi!');
-      }
-      setMemberId('');
-      setAddMemberModalVisible(false);
-    };
+  // A'zo qo'shish modali state
+  const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
+  const [selectedMemberId, setSelectedMemberId] = useState('');
 
-    return (
-    <div>
-      <Header/>
-      <Siderbar/>
-      <div className="groups-container">
-      <div className='page1'>
-      <h2>Guruhlar</h2>
-        {error && <p className="error">{error}</p>}
+  // Yangi guruh yaratish funksiyasi
+  const handleCreateGroup = () => {
+    if (!groupName.trim() || !groupPassword.trim()) {
+      return alert('Guruh nomi va parol bo‘sh bo‘lmasligi kerak!');
+    }
+    createGroup({ name: groupName, password: groupPassword });
+    setGroupName('');
+    setGroupPassword('');
+    setCreateModalOpen(false);
+  };
 
+  // Guruhni o'chirish funksiyasi
+  const handleDeleteGroup = (groupId) => {
+    const confirmed = window.confirm('Haqiqatan ham ushbu guruhni o‘chirmoqchimisiz?');
+    if (confirmed) {
+      deleteGroup(groupId);
+    }
+  };
+
+  // Guruh a'zolarini ko'rish
+  const handleViewMembers = (groupId) => {
+    setSelectedGroupId(groupId);
+  };
+
+  // A'zo qo'shish jarayoni
+  const handleAddMember = () => {
+    if (!selectedGroupId) {
+      return alert('Guruh tanlanmagan!');
+    }
+    if (!selectedMemberId) {
+      return alert('Foydalanuvchini tanlang!');
+    }
+    addMember({ groupId: selectedGroupId, memberId: selectedMemberId });
+    setSelectedMemberId('');
+    setSearchText('');
+    setAddMemberModalOpen(false);
+  };
+
+  // A'zoni guruhdan chiqarish
+  const handleRemoveMember = (memberId) => {
+    if (!selectedGroupId) return;
+    const confirmed = window.confirm('Rostdan ham ushbu aʼzoni guruhdan chiqarilsinmi?');
+    if (confirmed) {
+      removeMember({ groupId: selectedGroupId, memberId });
+    }
+  };
+
+  return (
+   <div>
+    <Header/>
+    <Siderbar/>
+     <div className="groups-container">
+      {/* CHAP TOMON - Guruhlar ro'yxati */}
+      <div className="page1">
+        <h2>Guruhlar</h2>
+        {groupsError && <p style={{ color: 'red' }}>{groupsError}</p>}
         <div className="groups-header">
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />} 
-            onClick={() => setModalVisible(true)}
-          >
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
             Add Group
           </Button>
-
-          <Button 
-            type="default" 
-            icon={<UserOutlined />} 
-            onClick={() => navigate('/profile')}
-          >
-            Profile
-          </Button>
         </div>
-
         <List
           className="group-list"
           dataSource={groups}
+          loading={groupsLoading}
           renderItem={(group) => (
             <List.Item className="group-item">
-              <span>{group.name}</span>
-              <Button 
-                icon={<LoginOutlined />} 
-                onClick={() => {
-                  setSelectedGroupId(group.id);
-                  setJoinModalVisible(true);
-                }}
-              >
-                Join
+              <p><b>{group.name}</b></p>
+              <Button icon={<EyeOutlined />} onClick={() => handleViewMembers(group._id)}>
+                View Members
               </Button>
-              <Button 
-                icon={<UserAddOutlined />} 
+              <Button
+                icon={<UserAddOutlined />}
                 onClick={() => {
-                  setSelectedGroupId(group.id);
-                  setAddMemberModalVisible(true);
+                  setSelectedMemberId('');
+                  setSearchText('');
+                  setAddMemberModalOpen(true);
+                  setSelectedGroupId(group._id);
                 }}
               >
-                Add Member
+                
+              </Button>
+              <Button danger icon={<DeleteOutlined />} onClick={() => handleDeleteGroup(group._id)}>
+              
               </Button>
             </List.Item>
           )}
-          loading={loading}
         />
 
-  
+        {/* Modal: Yangi guruh yaratish */}
         <Modal
           title="Yangi Guruh Yaratish"
-          open={modalVisible}
+          open={createModalOpen}
           onOk={handleCreateGroup}
-          onCancel={() => setModalVisible(false)}
+          onCancel={() => setCreateModalOpen(false)}
         >
           <Input
             placeholder="Guruh nomi"
@@ -124,38 +143,61 @@
           />
         </Modal>
 
+        {/* Modal: A'zo qo'shish */}
         <Modal
-          title="Guruhga qo‘shilish"
-          open={joinModalVisible}
-          onOk={handleJoinGroup}
-          onCancel={() => setJoinModalVisible(false)}
-        >
-          <Input.Password
-            placeholder="Guruh parolini kiriting"
-            value={joinPassword}
-            onChange={(e) => setJoinPassword(e.target.value)}
-          />
-        </Modal>
-        <Modal
-          title="Guruhga a’zo qo‘shish"
-          open={addMemberModalVisible}
+          title="Guruhga a'zo qo'shish"
+          open={addMemberModalOpen}
           onOk={handleAddMember}
-          onCancel={() => setAddMemberModalVisible(false)}
+          onCancel={() => {
+            setAddMemberModalOpen(false);
+            setSearchText('');
+          }}
         >
           <Input
-            placeholder="Foydalanuvchi ID sini kiriting"
-            value={memberId}
-            onChange={(e) => setMemberId(e.target.value)}
+            placeholder="Username yoki ism"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ marginBottom: '10px' }}
+          />
+          <List
+            dataSource={searchedMembers}
+            loading={searchingMembers}
+            renderItem={(user) => (
+              <List.Item
+                onClick={() => {
+                  setSelectedMemberId(user._id);
+                  setSearchText(user.username || user.name);
+                }}
+                style={{ cursor: 'pointer' }}
+              >
+                {user.name} ({user.username})
+              </List.Item>
+            )}
           />
         </Modal>
       </div>
-      <div className='page2'>
-          
-      </div>
+
+      {/* O'NG TOMON - Tanlangan guruh a'zolari */}
+      <div className="page2">
+        <h2>A'zolar</h2>
+        {membersLoading && <p>Loading members...</p>}
+        {!membersLoading && groupMembers.length === 0 && <p>Bu guruhda hali a'zo yo'q.</p>}
+        <List className='page2_list'
+          dataSource={groupMembers}
+          renderItem={(member) => (
+            <List.Item className="group-item">
+              <span>
+              </span>
+              <Button danger onClick={() => handleRemoveMember(member._id)}>
+                Remove
+              </Button>
+            </List.Item>
+          )}
+        />
       </div>
     </div>
-      
-    );
-  };
+   </div>
+  );
+};
 
-  export default Groups;
+export default Groups;
