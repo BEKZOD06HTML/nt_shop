@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { Button, Input, Modal, List } from 'antd';
-import { PlusOutlined, DeleteOutlined, EyeOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  UserAddOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { useGroups } from '../../hooks/useGroups';
-import { useNavigate } from 'react-router-dom'; // navigate import qilindi
+import { useNavigate } from 'react-router-dom';
 import './groups.css';
 import Header from '../header/header';
 import Siderbar from '../sidebar/sidebar';
 
 const Groups = () => {
-  const navigate = useNavigate(); // navigate funksiyasini yaratamiz
+  const navigate = useNavigate();
 
   const {
     groups,
@@ -53,10 +59,12 @@ const Groups = () => {
     const confirmed = window.confirm('Haqiqatan ham ushbu guruhni o‘chirmoqchimisiz?');
     if (confirmed) {
       deleteGroup(groupId);
+      // Agar localStorage'da ushbu guruh uchun maʼlumot bo'lsa, tozalash:
+      localStorage.removeItem(`groupMembers-${groupId}`);
     }
   };
 
-  // Guruh a'zolarini ko'rish
+  // Guruh a'zolarini ko'rish (View Members)
   const handleViewMembers = (groupId) => {
     setSelectedGroupId(groupId);
   };
@@ -69,7 +77,18 @@ const Groups = () => {
     if (!selectedMemberId) {
       return alert('Foydalanuvchini tanlang!');
     }
+    // Serverga aʼzo qo'shish so'rovi
     addMember({ groupId: selectedGroupId, memberId: selectedMemberId });
+
+    // LocalStorage'da yangilash: avvalgi aʼzolarni oling
+    const storedMembers =
+      JSON.parse(localStorage.getItem(`groupMembers-${selectedGroupId}`)) || [];
+    // Qidiruv natijalaridan qo'shilayotgan foydalanuvchini topamiz
+    const memberToAdd = searchedMembers.find((user) => user._id === selectedMemberId);
+    if (memberToAdd) {
+      storedMembers.push(memberToAdd);
+      localStorage.setItem(`groupMembers-${selectedGroupId}`, JSON.stringify(storedMembers));
+    }
     setSelectedMemberId('');
     setSearchText('');
     setAddMemberModalOpen(false);
@@ -81,8 +100,19 @@ const Groups = () => {
     const confirmed = window.confirm('Rostdan ham ushbu aʼzoni guruhdan chiqarilsinmi?');
     if (confirmed) {
       removeMember({ groupId: selectedGroupId, memberId });
+      // LocalStorage'dan ham o'chiramiz:
+      let storedMembers =
+        JSON.parse(localStorage.getItem(`groupMembers-${selectedGroupId}`)) || [];
+      storedMembers = storedMembers.filter((member) => member._id !== memberId);
+      localStorage.setItem(`groupMembers-${selectedGroupId}`, JSON.stringify(storedMembers));
     }
   };
+
+  // Guruh a'zolari uchun localStorage'dan olingan ro'yxat yoki serverdan kelgan maʼlumot
+  const membersList =
+    JSON.parse(localStorage.getItem(`groupMembers-${selectedGroupId}`)) ||
+    groupMembers ||
+    [];
 
   return (
     <div>
@@ -107,7 +137,9 @@ const Groups = () => {
             loading={groupsLoading}
             renderItem={(group) => (
               <List.Item className="group-item">
-                <p><b>{group.name}</b></p>
+                <p>
+                  <b>{group.name}</b>
+                </p>
                 <Button icon={<EyeOutlined />} onClick={() => handleViewMembers(group._id)}>
                   View Members
                 </Button>
@@ -183,20 +215,24 @@ const Groups = () => {
         <div className="page2">
           <h2>A'zolar</h2>
           {membersLoading && <p>Loading members...</p>}
-          {!membersLoading && groupMembers.length === 0 && <p>Bu guruhda hali a'zo yo'q.</p>}
-          <List className='page2_list'
-            dataSource={groupMembers}
-            renderItem={(member) => (
-              <List.Item className="group-item">
-                <span>
-                  {member.name} ({member.username})
-                </span>
-                <Button danger onClick={() => handleRemoveMember(member.id)}>
-                  Remove
-                </Button>
-              </List.Item>
-            )}
-          />
+          {!membersLoading && membersList.length === 0 ? (
+            <p>Bu guruhda hali a'zo yo'q.</p>
+          ) : (
+            <List
+              className="page2_list"
+              dataSource={membersList}
+              renderItem={(member) => (
+                <List.Item className="group-item">
+                  <span>
+                    {member.name} ({member.username})
+                  </span>
+                  <Button danger onClick={() => handleRemoveMember(member._id)}>
+                    Remove
+                  </Button>
+                </List.Item>
+              )}
+            />
+          )}
         </div>
       </div>
     </div>
