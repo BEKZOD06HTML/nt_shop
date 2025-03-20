@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Button, Input, Modal, List } from 'antd';
-import { PlusOutlined, DeleteOutlined, EyeOutlined, UserAddOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, EyeOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
 import { useGroups } from '../../hooks/useGroups';
+import { useNavigate } from 'react-router-dom'; // navigate import qilindi
 import './groups.css';
- import Header from '../header/header'
- import Siderbar from '../sidebar/sidebar'
+import Header from '../header/header';
+import Siderbar from '../sidebar/sidebar';
 
 const Groups = () => {
+  const navigate = useNavigate(); // navigate funksiyasini yaratamiz
+
   const {
     groups,
     groupsLoading,
@@ -82,121 +85,121 @@ const Groups = () => {
   };
 
   return (
-   <div>
-    <Header/>
-    <Siderbar/>
-     <div className="groups-container">
-      {/* CHAP TOMON - Guruhlar ro'yxati */}
-      <div className="page1">
-        <h2>Guruhlar</h2>
-        {groupsError && <p style={{ color: 'red' }}>{groupsError}</p>}
-        <div className="groups-header">
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-            Add Group
-          </Button>
-        </div>
-        <List
-          className="group-list"
-          dataSource={groups}
-          loading={groupsLoading}
-          renderItem={(group) => (
-            <List.Item className="group-item">
-              <p><b>{group.name}</b></p>
-              <Button icon={<EyeOutlined />} onClick={() => handleViewMembers(group._id)}>
-                View Members
-              </Button>
-              <Button
-                icon={<UserAddOutlined />}
-                onClick={() => {
-                  setSelectedMemberId('');
-                  setSearchText('');
-                  setAddMemberModalOpen(true);
-                  setSelectedGroupId(group._id);
-                }}
-              >
-                
-              </Button>
-              <Button danger icon={<DeleteOutlined />} onClick={() => handleDeleteGroup(group._id)}>
-              
-              </Button>
-            </List.Item>
-          )}
-        />
-
-        {/* Modal: Yangi guruh yaratish */}
-        <Modal
-          title="Yangi Guruh Yaratish"
-          open={createModalOpen}
-          onOk={handleCreateGroup}
-          onCancel={() => setCreateModalOpen(false)}
-        >
-          <Input
-            placeholder="Guruh nomi"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            style={{ marginBottom: '10px' }}
-          />
-          <Input.Password
-            placeholder="Parol"
-            value={groupPassword}
-            onChange={(e) => setGroupPassword(e.target.value)}
-          />
-        </Modal>
-
-        {/* Modal: A'zo qo'shish */}
-        <Modal
-          title="Guruhga a'zo qo'shish"
-          open={addMemberModalOpen}
-          onOk={handleAddMember}
-          onCancel={() => {
-            setAddMemberModalOpen(false);
-            setSearchText('');
-          }}
-        >
-          <Input
-            placeholder="Username yoki ism"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ marginBottom: '10px' }}
-          />
+    <div>
+      <Header />
+      <Siderbar />
+      <div className="groups-container">
+        {/* CHAP TOMON - Guruhlar ro'yxati */}
+        <div className="page1">
+          <h2>Guruhlar</h2>
+          {groupsError && <p style={{ color: 'red' }}>{groupsError}</p>}
+          <div className="groups-header">
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
+              Add Group
+            </Button>
+            <Button type="default" icon={<UserOutlined />} onClick={() => navigate('/profile')}>
+              Profile
+            </Button>
+          </div>
           <List
-            dataSource={searchedMembers}
-            loading={searchingMembers}
-            renderItem={(user) => (
-              <List.Item
-                onClick={() => {
-                  setSelectedMemberId(user._id);
-                  setSearchText(user.username || user.name);
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                {user.name} ({user.username})
+            className="group-list"
+            dataSource={groups}
+            loading={groupsLoading}
+            renderItem={(group) => (
+              <List.Item className="group-item">
+                <p><b>{group.name}</b></p>
+                <Button icon={<EyeOutlined />} onClick={() => handleViewMembers(group._id)}>
+                  View Members
+                </Button>
+                <Button
+                  icon={<UserAddOutlined />}
+                  onClick={() => {
+                    setSelectedMemberId('');
+                    setSearchText('');
+                    setAddMemberModalOpen(true);
+                    setSelectedGroupId(group._id);
+                  }}
+                />
+                <Button danger icon={<DeleteOutlined />} onClick={() => handleDeleteGroup(group._id)} />
               </List.Item>
             )}
           />
-        </Modal>
-      </div>
 
-      {/* O'NG TOMON - Tanlangan guruh a'zolari */}
-      <div className="page2">
-        <h2>A'zolar</h2>
-        {membersLoading && <p>Loading members...</p>}
-        {!membersLoading && groupMembers.length === 0 && <p>Bu guruhda hali a'zo yo'q.</p>}
-        <List className='page2_list'
-          dataSource={groupMembers}
-          renderItem={(member) => (
-            <List.Item className="group-item">
-              <span>
-              </span>
-              <Button danger onClick={() => handleRemoveMember(member._id)}>
-                Remove
-              </Button>
-            </List.Item>
-          )}
-        />
+          {/* Modal: Yangi guruh yaratish */}
+          <Modal
+            title="Yangi Guruh Yaratish"
+            open={createModalOpen}
+            onOk={handleCreateGroup}
+            onCancel={() => setCreateModalOpen(false)}
+          >
+            <Input
+              placeholder="Guruh nomi"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              style={{ marginBottom: '10px' }}
+            />
+            <Input.Password
+              placeholder="Parol"
+              value={groupPassword}
+              onChange={(e) => setGroupPassword(e.target.value)}
+            />
+          </Modal>
+
+          {/* Modal: A'zo qo'shish */}
+          <Modal
+            title="Guruhga a'zo qo'shish"
+            open={addMemberModalOpen}
+            onOk={handleAddMember}
+            onCancel={() => {
+              setAddMemberModalOpen(false);
+              setSearchText('');
+            }}
+          >
+            <Input
+              placeholder="Username yoki ism"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ marginBottom: '10px' }}
+            />
+            <List
+              dataSource={searchedMembers}
+              loading={searchingMembers}
+              renderItem={(user) => (
+                <List.Item
+                  onClick={() => {
+                    setSelectedMemberId(user._id);
+                    setSearchText(user.username || user.name);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {user.name} ({user.username})
+                </List.Item>
+              )}
+            />
+          </Modal>
+        </div>
+
+        {/* O'NG TOMON - Tanlangan guruh a'zolari */}
+        <div className="page2">
+          <h2>A'zolar</h2>
+          {membersLoading && <p>Loading members...</p>}
+          {!membersLoading && groupMembers.length === 0 && <p>Bu guruhda hali a'zo yo'q.</p>}
+          <List className='page2_list'
+            dataSource={groupMembers}
+            renderItem={(member) => (
+              <List.Item className="group-item">
+                <span>
+                  {member.name} ({member.username})
+                </span>
+                <Button danger onClick={() => handleRemoveMember(member.id)}>
+                  Remove
+                </Button>
+              </List.Item>
+            )}
+          />
+        </div>
       </div>
     </div>
-   </div>
   );
 };
 

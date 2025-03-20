@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Dropdown, Button, Avatar, List } from 'antd';
 import { UserOutlined, DownOutlined, PlusOutlined, TeamOutlined } from '@ant-design/icons';
 import API from '../../utils/API';
@@ -10,6 +10,7 @@ const Sidebar = () => {
   const [groups, setGroups] = useState([]);
   const [error, setError] = useState('');
   const [groupVisible, setGroupVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -42,11 +43,18 @@ const Sidebar = () => {
     <div className='sidebar'>
       <h2 className='logo_1'>Groups</h2>
 
-      <Dropdown overlay={
-        <Menu>
-          <Menu.Item key="1" icon={<UserOutlined />}>My Account</Menu.Item>
-        </Menu>
-      } trigger={['click']}>
+      <Dropdown
+        overlay={
+          <Menu>
+            <Menu.Item key="1">
+              <Button type="default" icon={<UserOutlined />} onClick={() => navigate('/profile')}>
+                Profile
+              </Button>
+            </Menu.Item>
+          </Menu>
+        }
+        trigger={['click']}
+      >
         <div className='profile-section'>
           <Avatar size={48} src={user?.avatar || '/default-avatar.png'} icon={!user?.avatar && <UserOutlined />} />
           <div className='profile-info'>
@@ -65,17 +73,18 @@ const Sidebar = () => {
         {groupVisible && (
           <List
             dataSource={groups}
-            renderItem={group => (
-              <List.Item>
+            renderItem={(group) => (
+              <List.Item key={group.id}>
                 <span>{group.name}</span>
               </List.Item>
             )}
+            locale={{ emptyText: 'Guruhlar topilmadi' }}
           />
         )}
 
         <Link to="/groups" className="add-group-btn">
           <Button type="primary" icon={<PlusOutlined />}>
-            Yangi guruh qushish
+            Yangi guruh qo‘shish
           </Button>
         </Link>
       </div>
