@@ -71,6 +71,7 @@ const Sidebar = () => {
         </Button>
 
         {groupVisible && (
+          <Link to="/groups">
           <List
             dataSource={groups}
             renderItem={(group) => (
@@ -79,7 +80,7 @@ const Sidebar = () => {
               </List.Item>
             )}
             locale={{ emptyText: 'Guruhlar topilmadi' }}
-          />
+          /></Link>
         )}
 
         <Link to="/groups" className="add-group-btn">
